@@ -135,10 +135,6 @@ Tagify.prototype = {
             try { this.settings.delimiters = new RegExp(this.settings.delimiters, "g") }
             catch(e){}
         }
-
-        // make sure the dropdown will be shown on "focus" and not only after typing something (in "select" mode)
-        if( this.settings.mode == 'select' )
-            this.settings.dropdown.enabled = 0
     },
 
     /**
@@ -411,7 +407,7 @@ Tagify.prototype = {
 
                     case 'Down' :
                     case 'ArrowDown' :
-                        if( this.settings.mode == 'select' )
+                        if( this.settings.mode == 'select' && this.settings.dropdown.enabled < 1)
                             this.dropdown.show.call(this)
                         break;
 
@@ -522,7 +518,7 @@ Tagify.prototype = {
                     this.trigger("click", { tag:tagElm, index:tagElmIdx, data:this.value[tagElmIdx] });
                 }
 
-                if( this.settings.mode == 'select' || this.settings.dropdown.enabled === 0 )
+                if( this.settings.dropdown.enabled === 0 )
                     this.dropdown.show.call(this);
             },
 

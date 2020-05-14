@@ -1,5 +1,5 @@
 /**
- * Tagify (v 2.31.0)- tags input component
+ * Tagify (v 2.31.2)- tags input component
  * By Yair Even-Or
  * Don't sell this code. (c)
  * https://github.com/yairEO/tagify
@@ -15,17 +15,21 @@
 }(this, function() {
 "use strict";
 
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
-function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
@@ -151,10 +155,7 @@ Tagify.prototype = {
       try {
         this.settings.delimiters = new RegExp(this.settings.delimiters, "g");
       } catch (e) {}
-    } // make sure the dropdown will be shown on "focus" and not only after typing something (in "select" mode)
-
-
-    if (this.settings.mode == 'select') this.settings.dropdown.enabled = 0;
+    }
   },
 
   /**
@@ -415,7 +416,7 @@ Tagify.prototype = {
 
           case 'Down':
           case 'ArrowDown':
-            if (this.settings.mode == 'select') this.dropdown.show.call(this);
+            if (this.settings.mode == 'select' && this.settings.dropdown.enabled < 1) this.dropdown.show.call(this);
             break;
 
           case 'ArrowRight':
@@ -522,7 +523,7 @@ Tagify.prototype = {
             data: this.value[tagElmIdx]
           });
         }
-        if (this.settings.mode == 'select' || this.settings.dropdown.enabled === 0) this.dropdown.show.call(this);
+        if (this.settings.dropdown.enabled === 0) this.dropdown.show.call(this);
       },
       onEditTagInput: function onEditTagInput(editableElm) {
         var tagElm = editableElm.closest('tag'),
@@ -546,7 +547,7 @@ Tagify.prototype = {
             value = currentValue || editableElm.originalValue,
             hasChanged = this.input.normalize(editableElm) != editableElm.originalValue,
             isValid = tagElm.isValid,
-            tagData = _objectSpread({}, this.value[tagElmIdx], {
+            tagData = _objectSpread(_objectSpread({}, this.value[tagElmIdx]), {}, {
           value: value
         });
 
@@ -853,7 +854,7 @@ Tagify.prototype = {
       // iterate the collection items and check for values that can be splitted into multiple tags
       tagsItems = (_ref2 = []).concat.apply(_ref2, _toConsumableArray(tagsItems.map(function (item) {
         return mapStringToCollection(item.value).map(function (newItem) {
-          return _objectSpread({}, item, {}, newItem);
+          return _objectSpread(_objectSpread({}, item), newItem);
         });
       })));
       return tagsItems;
